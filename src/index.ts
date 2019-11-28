@@ -1,7 +1,10 @@
-import { app, BrowserWindow, screen } from 'electron';
+import {
+  app, BrowserWindow, screen, globalShortcut,
+} from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
-import { getPixelColor } from 'robotjs';
+import { bot } from './utils/botApi';
+import { clipPositionAndColor } from './utils/helpers';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -33,10 +36,10 @@ const createWindow = async () => {
   // });
 
   // Open the DevTools.
-  if (isDevMode) {
-    await installExtension(REACT_DEVELOPER_TOOLS);
-    mainWindow.webContents.openDevTools();
-  }
+  // if (isDevMode) {
+  //   await installExtension(REACT_DEVELOPER_TOOLS);
+  //   mainWindow.webContents.openDevTools();
+  // }
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
@@ -49,10 +52,7 @@ const createWindow = async () => {
   setInterval(() => {
     if (!mainWindow) return;
     const mouseCoordinates = screen.getCursorScreenPoint();
-    const color = getPixelColor(
-      mouseCoordinates.x,
-      mouseCoordinates.y,
-    );
+    const color = bot.pxl();
     
 
     mainWindow.webContents.send('data', {
@@ -60,6 +60,14 @@ const createWindow = async () => {
       color,
     })
   },333);
+
+  globalShortcut.register('Ctrl+Shift+L', () => {
+    const mouseCoordinates = screen.getCursorScreenPoint();
+    clipPositionAndColor(
+      `bot.click(${mouseCoordinates.x}, ${mouseCoordinates.y}); //${bot.pxl()}`
+    );
+  });
+  
 };
 
 // This method will be called when Electron has finished
