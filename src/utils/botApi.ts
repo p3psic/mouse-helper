@@ -3,10 +3,44 @@ import { isSimilarColor } from './helpers';
 import { LEFT_CLICK, WaitMs, MouseButtonState } from '../constants';
 import { msleep } from 'sleep';
 import { KeyModifier } from '../types/general';
+import { screen } from 'electron';
 
 export const bot = {
-  move(x: number, y: number) {
-    b.moveMouse(x, y);
+  animate: 0,
+  move(x?: number, y?: number) {
+    x && y && b.moveMouse(x, y);
+
+    return this;
+  },
+  
+  animateMove(x: number, y: number) {
+    const start = Date.now();
+    const mouse = screen.getCursorScreenPoint();
+
+    const anim = () => {
+      const time = Date.now() - start;
+      const et = 300;
+      const progress = 1 - time / 300;
+
+      if (time < et) {
+        bot.move(
+          ~~(Math.abs(x - mouse.x) * progress),
+          ~~(Math.abs(y - mouse.y) * progress),
+        )
+        bot.waitMs(2);
+        anim();
+      }
+    };
+
+    anim();
+  },
+
+  dblClick(x?: number, y?: number) {
+    if (x && y) {
+      this.move(x, y);
+      b.mouseClick(LEFT_CLICK, true);
+    }
+
     return this;
   },
 
@@ -15,13 +49,17 @@ export const bot = {
       this.move(x, y);
       b.mouseClick(LEFT_CLICK);
     }
+
     return this;
   },
 
-  clickIfSimilarColor(x: number, y: number, color: string) {
-    const colorXY = b.getPixelColor(x, y);
+  clickIfSimilarColor(x: number, y: number, color: string[] | string) {
+    const pxlColorUnderMouse = b.getPixelColor(x, y);
 
-    if (isSimilarColor(color, colorXY)) {
+    if (Array.isArray(color)) {
+      const hasColor = color.find(color => isSimilarColor(color, pxlColorUnderMouse));
+      hasColor && this.click(x, y);
+    } else if (isSimilarColor(color, pxlColorUnderMouse)) {
       this.click(x, y);
     }
 

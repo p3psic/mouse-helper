@@ -4,7 +4,7 @@ import {
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
 import { bot } from './utils/botApi';
-import { clipPositionAndColor } from './utils/helpers';
+import { runStronghold6d, copyMousePosAndPxlColor } from './utils/scripts';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -19,13 +19,13 @@ if (isDevMode) {
 const createWindow = async () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 200,
+    width: 250,
     height: 30,
     x: 600,
-    y: 20,
+    y: 0,
     alwaysOnTop: true,
     frame: false,
-    // transparent: true,
+    transparent: true,
   });
 
   // and load the index.html of the app.
@@ -61,13 +61,9 @@ const createWindow = async () => {
     })
   },333);
 
-  globalShortcut.register('Ctrl+Shift+L', () => {
-    const mouseCoordinates = screen.getCursorScreenPoint();
-    clipPositionAndColor(
-      `bot.click(${mouseCoordinates.x}, ${mouseCoordinates.y}); //${bot.pxl()}`
-    );
-  });
-  
+  globalShortcut.register('`', copyMousePosAndPxlColor);
+
+  globalShortcut.register('F1', runStronghold6d);
 };
 
 // This method will be called when Electron has finished
