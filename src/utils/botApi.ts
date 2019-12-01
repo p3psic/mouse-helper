@@ -5,6 +5,11 @@ import { msleep } from 'sleep';
 import { KeyModifier } from '../types/general';
 import { screen } from 'electron';
 
+interface Coors {
+  x: number,
+  y: number,
+}
+
 export const bot = {
   animate: 0,
   move(x?: number, y?: number) {
@@ -66,6 +71,20 @@ export const bot = {
     return this;
   },
 
+  compireColorByCoors(x: number, y: number, color: string | string[]) {
+    const compireColor = this.pxl(x, y);
+
+    if (Array.isArray(color)) {
+      return this.includesColor(compireColor, color);
+    }
+
+    return isSimilarColor(compireColor, color);
+  },
+
+  includesColor(compireColor: string, colors: string[]) {
+    return colors.find(color => isSimilarColor(color, compireColor));
+  },
+
   pxl(x?: number, y?: number) {
     if (x && y) {
       return b.getPixelColor(x, y);
@@ -77,6 +96,18 @@ export const bot = {
       mousePosition.x,
       mousePosition.y,
     );
+  },
+
+  waitForColor(x: number, y: number, color: string | string[]) {
+    let counter = 0;
+    const limitWait = 50; // 5 sec
+    while (
+      this.compireColorByCoors(x, y, color)
+      && counter < limitWait
+    ) {
+      counter += 1;
+      this.waitMs(WaitMs.basic);
+    }
   },
 
   waitMs(ms: number) {
@@ -100,10 +131,6 @@ export const bot = {
     b.mouseToggle(MouseButtonState.up);
 
     return this;
-  },
-
-  includesColor(compireColor: string, colors: string[]) {
-    return colors.find(color => isSimilarColor(color, compireColor));
   },
 
   press(btn: string, modifier?: KeyModifier[]) {

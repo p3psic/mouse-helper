@@ -31,7 +31,10 @@ export const copyMousePosAndPxlColor = () => {
   const unactiveColor = bot.pxl(mouseCoordinates.x, mouseCoordinates.y);
 
   clipPositionAndColor(
-    `${clickCode} // ['${activeColor}','${unactiveColor}']`
+    `
+    ${clickCode} // ['${activeColor}','${unactiveColor}']
+    bot.waitForColor(,);
+    `
   );
 
   bot.move(mouseCoordinates.x, mouseCoordinates.y);

@@ -11,3 +11,11 @@ export enum MouseButtonState {
   down = 'down',
   up = 'up',
 };
+
+export enum VikHotKeys {
+  watchtower = 'w',
+  clans = 'c',
+  resourceAid = 's',
+  loki = 'q',
+  barracks = 't',
+};
