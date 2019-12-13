@@ -4,8 +4,7 @@ import {
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
 import { bot } from './utils/botApi';
-import { runStronghold6d, copyMousePosAndPxlColor } from './utils/scripts';
-import { openWatchtower } from './utils/bot-scripts/watchtower';
+import { runStronghold6d, copyMousePosAndPxlColor, runStronghold3dPP, runStronghold6dPP, runInviderAttack } from './utils/scripts';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -63,8 +62,10 @@ const createWindow = async () => {
   },333);
 
   globalShortcut.register('`', copyMousePosAndPxlColor);
-  // globalShortcut.register('F1', runStronghold6d);
-  globalShortcut.register('F1', openWatchtower);
+  globalShortcut.register('F1', runStronghold6d);
+  globalShortcut.register('F2', runStronghold3dPP);
+  globalShortcut.register('F3', runStronghold6dPP);
+  globalShortcut.register('F4', runInviderAttack);
 };
 
 // This method will be called when Electron has finished

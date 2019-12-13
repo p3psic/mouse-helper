@@ -3,17 +3,52 @@ import { WaitMs } from '../constants';
 import { screen } from 'electron';
 import { clipPositionAndColor } from './helpers';
 
-const RESUOURCE_RECYCLE_LINE = [1106, 482];
+const recycleLineGameRoom = [1106, 482];
 const TIME_RECYCLE_6DAYS_LINE = [1071, 758];
+
+const resourceLinePlarPlay = [1100, 480];
+const recycleLinePlarPlay6d = [1080, 765];
+const recycleLinePlarPlay3d = [1127, 765];
 
 export const runStronghold6d = () => {
   console.log('cita 6d')
   const mouse = screen.getCursorScreenPoint();
 
-  bot.move(...RESUOURCE_RECYCLE_LINE);
-  bot.dblClick(...RESUOURCE_RECYCLE_LINE).waitMs(WaitMs.basic).typeString('5555');
+  bot.move(...recycleLineGameRoom);
+  bot.dblClick(...recycleLineGameRoom).waitMs(WaitMs.basic).typeString('5555');
 
   bot.dblClick(...TIME_RECYCLE_6DAYS_LINE).waitMs(WaitMs.basic);
+
+  bot.move(mouse.x, mouse.y)
+    .waitMs(WaitMs.basic);
+
+  return false;
+};
+
+export const runStronghold6dPP = () => {
+  console.log('cita 6d')
+  const mouse = screen.getCursorScreenPoint();
+  
+
+  bot.move(...resourceLinePlarPlay);
+  bot.dblClick(...resourceLinePlarPlay).waitMs(WaitMs.basic).typeString('5555');
+
+  bot.dblClick(...recycleLinePlarPlay6d).waitMs(WaitMs.basic);
+
+  bot.move(mouse.x, mouse.y)
+    .waitMs(WaitMs.basic);
+
+  return false;
+};
+
+export const runStronghold3dPP = () => {
+  console.log('cita 3d')
+  const mouse = screen.getCursorScreenPoint();
+
+  bot.move(...resourceLinePlarPlay);
+  bot.dblClick(...resourceLinePlarPlay).waitMs(WaitMs.basic).typeString('5555');
+
+  bot.dblClick(...recycleLinePlarPlay3d).waitMs(WaitMs.basic);
 
   bot.move(mouse.x, mouse.y)
     .waitMs(WaitMs.basic);
@@ -33,7 +68,7 @@ export const copyMousePosAndPxlColor = () => {
   clipPositionAndColor(
     `
     ${clickCode} // ['${activeColor}','${unactiveColor}']
-    bot.waitForColor(,);
+    bot.waitForColor(${mouseCoordinates.x}, ${mouseCoordinates.y}, ['${activeColor}','${unactiveColor}']);
     `
   );
 
@@ -41,3 +76,20 @@ export const copyMousePosAndPxlColor = () => {
 
   return false;
 };
+
+const INVDER_DELAY = 500;
+let PAUSED_INVIDER_ATTACK = false;
+let inviderTimerId: NodeJS.Timeout;
+
+const attackInvider = (): void => {
+  if (!PAUSED_INVIDER_ATTACK) return;
+  // gameroom
+  bot.clickIfSimilarColor(775, 808, ['a4080b', '730408']);
+};
+
+export const runInviderAttack = (): void => {
+  PAUSED_INVIDER_ATTACK = !PAUSED_INVIDER_ATTACK;
+
+  if (inviderTimerId) clearInterval(inviderTimerId);
+  inviderTimerId = setInterval(attackInvider, INVDER_DELAY);
+}
